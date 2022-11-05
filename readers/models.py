@@ -4,7 +4,7 @@ from django.db import models
 class Reader(models.Model):
     name = models.TextField(verbose_name='Имя')
     email = models.TextField(verbose_name='Почта')
-    rents = models.ManyToManyField('rents.Rent', verbose_name='Аренды')
+    rents = models.ManyToManyField('rents.Rent', blank=True, verbose_name='Аренды')
     fine = models.IntegerField(verbose_name='Штраф')
 
     class Meta:

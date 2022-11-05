@@ -5,4 +5,4 @@ from readers.models import Reader
 class ReaderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reader
-        fields = '__all__'
+        fields = ['name', 'email', 'fine']

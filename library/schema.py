@@ -1,5 +1,4 @@
 import graphene
-
 import authors.schema
 import books.schema
 import readers.schema
@@ -10,7 +9,7 @@ class Query(books.schema.Query, authors.schema.Query, rents.schema.Query, reader
     pass
 
 
-class Mutation(books.schema.Mutation, authors.schema.Mutation, rents.schema.Mutation, readers.schema.Mutation, graphene.ObjectType):
+class Mutation(authors.schema.Mutation, books.schema.Mutation, rents.schema.Mutation, readers.schema.Mutation, graphene.ObjectType):
     pass
 
 
