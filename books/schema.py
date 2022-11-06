@@ -11,6 +11,10 @@ class BookType(DjangoObjectType):
         model = Book
 
 
+class BookInput(graphene.InputObjectType):
+    id = graphene.ID()
+
+
 class Query(ObjectType):
     book = graphene.Field(BookType, id=graphene.Int())
     books = graphene.List(BookType)

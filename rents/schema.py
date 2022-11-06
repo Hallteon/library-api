@@ -1,7 +1,14 @@
+from datetime import datetime
+
 import graphene
-from graphene import ObjectType, Argument
+from django.db.models import F
+from graphene import ObjectType
 from graphene_django.rest_framework.mutation import SerializerMutation
 from graphene_django.types import DjangoObjectType
+
+from books.schema import BookInput
+from readers.models import Reader
+from readers.schema import ReaderInput
 from rents.models import Rent
 from rents.serializers import RentSerializer
 
@@ -27,22 +34,32 @@ class Query(ObjectType):
         return Rent.objects.all()
 
 
-class BookInput(graphene.InputObjectType):
-    id = graphene.ID()
-
-
 class ReturnBook(graphene.Mutation):
     ok = graphene.Boolean()
 
     class Arguments:
         book_id = graphene.Int(BookInput)
+        reader_id = graphene.Int(ReaderInput)
 
     @classmethod
     def mutate(cls, root, info, **kwargs):
-        obj = Rent.objects.get(book=kwargs.get('book_id'))
-        obj.delete()
+        objs = Rent.objects.filter(book_id=kwargs.get('book_id'), book_reader_id=kwargs.get('reader_id'))
 
-        return cls(ok=True)
+        for obj in objs:
+            time_rent = datetime.now() - obj.rent_time.replace(tzinfo=None)
+            days = time_rent.days
+
+            if days > obj.period:
+                fine_days = days - obj.period
+                reader_obj = Reader.objects.get(id=kwargs.get('reader_id'))
+                reader_obj.fine = reader_obj.fine + (fine_days * obj.fine_size)
+
+                reader_obj.save()
+
+        if list(objs):
+            objs.delete()
+
+            return cls(ok=True)
 
 
 class RentSerializerMutation(SerializerMutation):

@@ -12,6 +12,10 @@ class ReaderType(DjangoObjectType):
         model = Reader
 
 
+class ReaderInput(graphene.InputObjectType):
+    id = graphene.ID()
+
+
 class Query(ObjectType):
     reader = graphene.Field(ReaderType, id=graphene.Int())
     readers = graphene.List(ReaderType)
