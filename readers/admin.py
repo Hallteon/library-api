@@ -1,3 +1,4 @@
 from django.contrib import admin
+from readers.models import Reader
 
-# Register your models here.
+admin.site.register(Reader)
